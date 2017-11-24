@@ -1,6 +1,6 @@
 ### Snake Game made in Vanilla JS
 # How To Play
-* Clone this Repo. use:
+* Clone this Repo.
 ```
 git clone https://github.com/bmviniciuss/SnakeJs.git
 cd SnakeJs
