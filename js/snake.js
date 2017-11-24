@@ -15,6 +15,11 @@ function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
 
+function distanceTwoPoints(pointA, pointB){
+	return Math.sqrt((pointA.x - pointB.x) * (pointA.x - pointB.x) +
+				(pointA.y - pointB.y) * (pointA.y - pointB.y))
+}
+
 class Vector {
 	constructor(x = 0, y = 0) {
 		this.x = x;
@@ -49,9 +54,9 @@ class Snake {
 
 	show(context) {
 		for (let i = 0; i < this.tail.length; i++) {
-			Rect(context ,this.tail[i].x, this.tail[i].y, "blue");
+			Rect(context, this.tail[i].x, this.tail[i].y, 'white');
 		}
-		Rect(context, this.pos.x, this.pos.y ,"green");
+		Rect(context, this.pos.x, this.pos.y, 'white');
 	}
 
 	move() {
@@ -74,14 +79,22 @@ class Snake {
 	}
 
 	eat(food) {
-		if (Math.sqrt((food.pos.x - this.pos.x) * (food.pos.x - this.pos.x) +
-				(food.pos.y - this.pos.y) * (food.pos.y - this.pos.y)) < 2) {
+		let distance = distanceTwoPoints(food.pos, this.pos);
+		if (distanceTwoPoints(food.pos, this.pos) < 2) {
 			this.total++;
-			// this.tail.push(this.pos);
 			return true;
 		} else {
 			return false;
 		}
+	}
+
+	death() {
+		for (let i = 0; i < this.tail.length; i++) {
+			if (this.pos.x == this.tail[i].x && this.pos.y == this.tail[i].y){
+				return true;
+			}
+		}
+		return false;
 	}
 }
 
@@ -100,7 +113,7 @@ class Food {
 	}
 
 	show(context) {
-		Rect(context, this.pos.x, this.pos.y, "red");
+		Rect(context, this.pos.x, this.pos.y, 'red');
 	}
 }
 
@@ -108,14 +121,18 @@ class Game {
 	constructor(canvas) {
 		this._canvas = canvas;
 		this._context = canvas.getContext('2d');
+		this._gameOn = 1;
 		this.snake = new Snake();
 		this.food = new Food();
 		this.food.pickLocation();
 		// this.snake.velocity.x = 1;
 
 		const callback = () => {
-			this.update();
-			setTimeout(callback, 1000 / fps);
+			if(this._gameOn) {
+				this.update();
+				setTimeout(callback, 1000 / fps);
+			}
+			
 		}
 
 		callback();
@@ -124,28 +141,29 @@ class Game {
 	draw(color) {
 		this._context.fillStyle = color;
 		this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
-		
+
 	}
 
 	update() {
-		this.draw("black");
+		this.draw('black');
 
 		if (this.snake.eat(this.food)) {
 			this.food.pickLocation();
 		}
 
+		if(this.snake.death()) {
+			this._gameOn = false;
+		}
 		this.snake.move();
 		this.snake.show(this._context);
 
 		// boundaries
-		if (this.snake.pos.right > this._canvas.width + scale) {
-			this.snake.pos.x = 0;
-		} else if (this.snake.pos.left < -scale) {
-			this.snake.pos.x = this._canvas.width;
-		} else if (this.snake.pos.bottom > this._canvas.height + scale) {
-			this.snake.pos.y = 0;
-		} else if (this.snake.pos.y < -scale) {
-			this.snake.pos.y = this._canvas.height;
+		if (this.snake.pos.right > this._canvas.width - scale ||
+			this.snake.pos.left < 0) {
+			this.snake.velocity.x = 0;
+		} else if (this.snake.pos.bottom > this._canvas.height - scale ||
+				   this.snake.pos.top < 0) {
+			this.snake.velocity.y = 0;
 		}
 
 		this.food.show(this._context);
@@ -155,13 +173,17 @@ class Game {
 const game = new Game(canvas);
 
 window.addEventListener('keydown', function(event) {
-	if (event.key === "ArrowDown") {
+	if (event.key === 'ArrowDown') {
 		game.snake.dir(0, 1);
-	} else if (event.key === "ArrowUp") {
+	} else if (event.key === 'ArrowUp') {
 		game.snake.dir(0, -1);
-	} else if (event.key === "ArrowLeft") {
+	} else if (event.key === 'ArrowLeft') {
 		game.snake.dir(-1, 0);
-	} else if (event.key === "ArrowRight") {
+	} else if (event.key === 'ArrowRight') {
 		game.snake.dir(1, 0);
 	}
 }, true);
+
+canvas.addEventListener('click', function(event) {
+	game.snake.total++;
+});

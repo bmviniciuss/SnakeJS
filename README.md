@@ -12,7 +12,7 @@ python3 -m http.server
 * Open the localhost in port 8000
 
 ## Todo
-- [ ] Constrain the Snake.
+- [X] Constrain the Snake.
 - [ ] Implement Death.
 - [ ] Clean the code and separate in multiples files.
 - [ ] Make a nice web layout.
