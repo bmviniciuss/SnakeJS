@@ -15,10 +15,12 @@ function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
 
-function distanceTwoPoints(pointA, pointB){
+
+function distanceTwoPoints(pointA, pointB) {
 	return Math.sqrt((pointA.x - pointB.x) * (pointA.x - pointB.x) +
-				(pointA.y - pointB.y) * (pointA.y - pointB.y))
+		(pointA.y - pointB.y) * (pointA.y - pointB.y))
 }
+
 
 class Vector {
 	constructor(x = 0, y = 0) {
@@ -74,8 +76,12 @@ class Snake {
 	}
 
 	dir(x, y) {
-		this.velocity.x = x;
-		this.velocity.y = y;
+		if (this.velocity.x != -x){
+			this.velocity.x = x;
+		}
+		if (this.velocity.y != -y){
+			this.velocity.y = y;
+		}
 	}
 
 	eat(food) {
@@ -90,13 +96,19 @@ class Snake {
 
 	death() {
 		for (let i = 0; i < this.tail.length; i++) {
-			if (this.pos.x == this.tail[i].x && this.pos.y == this.tail[i].y){
+			if (this.pos.x == this.tail[i].x && this.pos.y == this.tail[i].y) {
 				return true;
 			}
 		}
 		return false;
 	}
+
+	reset() {
+		this.total = 0;
+		this.tail = [];
+	}
 }
+
 
 class Food {
 	constructor() {
@@ -117,6 +129,14 @@ class Food {
 	}
 }
 
+
+class Player {
+	constructor() {
+		this.score = 0;
+	}
+}
+
+
 class Game {
 	constructor(canvas) {
 		this._canvas = canvas;
@@ -125,14 +145,14 @@ class Game {
 		this.snake = new Snake();
 		this.food = new Food();
 		this.food.pickLocation();
+		this._player = new Player();
 		// this.snake.velocity.x = 1;
 
 		const callback = () => {
-			if(this._gameOn) {
+			if (this._gameOn) {
 				this.update();
 				setTimeout(callback, 1000 / fps);
 			}
-			
 		}
 
 		callback();
@@ -141,7 +161,6 @@ class Game {
 	draw(color) {
 		this._context.fillStyle = color;
 		this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
-
 	}
 
 	update() {
@@ -149,11 +168,15 @@ class Game {
 
 		if (this.snake.eat(this.food)) {
 			this.food.pickLocation();
+			this._player.score++;
 		}
 
-		if(this.snake.death()) {
-			this._gameOn = false;
+		if (this.snake.death()) {
+			this.snake.reset();
+			console.log('DEAD');
+			this._player.score = 0;
 		}
+
 		this.snake.move();
 		this.snake.show(this._context);
 
@@ -162,7 +185,7 @@ class Game {
 			this.snake.pos.left < 0) {
 			this.snake.velocity.x = 0;
 		} else if (this.snake.pos.bottom > this._canvas.height - scale ||
-				   this.snake.pos.top < 0) {
+			this.snake.pos.top < 0) {
 			this.snake.velocity.y = 0;
 		}
 
@@ -170,8 +193,8 @@ class Game {
 	}
 }
 
-const game = new Game(canvas);
 
+const game = new Game(canvas);
 window.addEventListener('keydown', function(event) {
 	if (event.key === 'ArrowDown') {
 		game.snake.dir(0, 1);
@@ -184,6 +207,7 @@ window.addEventListener('keydown', function(event) {
 	}
 }, true);
 
-canvas.addEventListener('click', function(event) {
-	game.snake.total++;
-});
+/* FOR DEBUG */
+// canvas.addEventListener('click', function(event) {
+// 	game.snake.total++;
+// });
