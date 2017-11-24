@@ -3,7 +3,7 @@
 * Clone this Repo.
 ```
 git clone https://github.com/bmviniciuss/SnakeJS.git
-cd SnakeJs
+cd SnakeJS
 ```
 * Then type in a terminal on the project folder.
 ```
