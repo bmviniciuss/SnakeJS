@@ -11,7 +11,7 @@ python3 -m http.server
 ```
 * Open the localhost in port 8000
 
-## Todo
+## To-Do
 - [X] Constrain the Snake.
 - [X] Implement death.
 - [ ] Add score system.
