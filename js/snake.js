@@ -107,6 +107,14 @@ class Snake {
 		this.total = 0;
 		this.tail = [];
 	}
+	pickLocation() {
+		let cols = Math.floor(canvas.width / scale);
+		let rows = Math.floor(canvas.height / scale);
+		let randCol = getRandomInt(0, cols);
+		let randRow = getRandomInt(0, rows);
+		this.pos.x = randCol * scale;
+		this.pos.y = randRow * scale;
+	}
 }
 
 
@@ -143,10 +151,10 @@ class Game {
 		this._context = canvas.getContext('2d');
 		this._gameOn = 1;
 		this.snake = new Snake();
+		this.snake.pickLocation();
 		this.food = new Food();
 		this.food.pickLocation();
 		this._player = new Player();
-		// this.snake.velocity.x = 1;
 
 		const callback = () => {
 			if (this._gameOn) {
@@ -172,8 +180,8 @@ class Game {
 		}
 
 		if (this.snake.death()) {
-			this.snake.reset();
 			console.log('DEAD');
+			this.snake.reset();
 			this._player.score = 0;
 		}
 
