@@ -13,6 +13,7 @@ python3 -m http.server
 
 ## Todo
 - [X] Constrain the Snake.
-- [X] Implement Death.
+- [X] Implement death.
+- [ ] Add score system.
 - [ ] Clean the code and separate in multiples files.
 - [ ] Make a nice web layout.
