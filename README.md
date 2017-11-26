@@ -11,6 +11,8 @@ python3 -m http.server
 ```
 * Open the localhost in port 8000
 
+[Live Demo](https://bmviniciuss.github.io/SnakeJS/)
+
 ## To-Do
 - [X] Constrain the Snake.
 - [X] Implement death.
